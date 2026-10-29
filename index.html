@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fcf8ef">
+  <title>刮刮乐 · 把小幸运刮出来</title>
+  <link rel="stylesheet" href="./src/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="site-header">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><div><h1>刮刮乐<span class="title-dot">.</span></h1><p>把小幸运，刮出来。</p></div></div>
+      <details class="data-menu" id="data-menu"><summary aria-label="打开数据管理菜单">数据管理 <span aria-hidden="true">⌄</span></summary><div class="menu-panel"><button data-testid="export-btn" aria-label="导出 JSON 备份">导出 JSON 备份</button><button id="import-btn" aria-label="导入 JSON 备份">导入 JSON 备份</button><button data-testid="clear-btn" class="danger-text" aria-label="清空所有数据">清空数据</button><p>数据仅保存在当前浏览器</p></div></details>
+      <input type="file" accept=".json,application/json" data-testid="import-input" id="import-input" hidden>
+    </header>
+    <main>
+      <div class="top-grid">
+        <section class="play-panel" aria-labelledby="play-heading">
+          <div class="panel-top"><span class="eyebrow"><i></i> 今日份的小确幸</span><span class="edition">LUCKY DAY / 01</span></div>
+          <h2 id="play-heading">好事，即将发生<span>✧</span></h2><p class="play-subtitle">每一份期待，都值得被认真揭晓。</p>
+          <div class="ticket" id="ticket">
+            <div class="ticket-top"><span>一张好运入场券</span><span aria-hidden="true">✦ ✦ ✦</span></div>
+            <div class="scratch-surface" id="scratch-surface">
+              <div class="prize-result" id="prize-result"><span class="result-icon" aria-hidden="true">✧</span><span class="result-caption">你的专属小幸运</span><strong id="prize-result-name"></strong></div>
+              <canvas data-testid="scratch-canvas" aria-label="刮奖区，拖动刮开，或按回车键揭晓" role="button"></canvas>
+            </div>
+            <div class="empty-pool" data-testid="empty-pool" hidden><span class="empty-icon" aria-hidden="true"><svg viewBox="0 0 96 72" width="80" height="60" fill="none"><path d="m25 34 23-10 23 10v24L48 69 25 58Z" fill="#f4e8cc" stroke="currentColor" stroke-width="2"/><path d="m25 34 23 11 23-11M48 45v24M48 24v21" stroke="currentColor" stroke-width="2"/><path d="m25 34-12-9 23-10 12 9 12-9 23 10-12 9-11-10-12 21-12-21Z" fill="#fff7e5" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m48 3 2 5 5 2-5 2-2 5-2-5-5-2 5-2ZM14 47l2 4 4 2-4 2-2 4-2-4-4-2 4-2Z" fill="#dfb95d"/><circle cx="78" cy="9" r="3" fill="#df624b"/><circle cx="82" cy="49" r="2" fill="#76938a"/></svg></span><h3 id="empty-title">好运，等你装满</h3><p id="empty-description">先添加喜欢的奖品，再来试试手气吧。</p><button class="primary" id="fill-pool" aria-label="前往添加或补充奖品">＋ 添加 / 补充奖品</button></div>
+            <div class="ticket-bottom"><span>GOOD THINGS ARE COMING</span><span id="card-number">NO. 001</span></div>
+          </div>
+          <div class="scratch-status"><span data-testid="reveal-text" id="reveal-text" role="status">添加奖品，开启一份期待</span><span id="progress-label">0%</span></div>
+          <div class="progress-track"><div id="progress-bar"></div></div>
+          <div class="play-actions"><button class="primary" data-testid="next-card" aria-label="开启下一张刮刮卡" disabled>下一张 <span aria-hidden="true">↗</span></button><button class="quiet" data-testid="reset-game" aria-label="重置游戏">↻ 重置游戏</button></div>
+          <p class="play-note">按住鼠标或用手指轻轻刮动 · 刮开约 45% 自动揭晓</p>
+          <div class="confetti-container" id="confetti" aria-hidden="true"></div>
+        </section>
+        <section class="panel pool-panel" id="pool-panel" aria-labelledby="pool-heading">
+          <div class="section-heading"><div><span class="eyebrow">THE PRIZE POOL</span><h2 id="pool-heading">装一点小惊喜</h2></div><span class="section-icon" aria-hidden="true">♧</span></div>
+          <form id="prize-form" novalidate>
+            <div class="form-grid"><label>奖品名称<input data-testid="prize-name-input" id="prize-name-input" maxlength="80" placeholder="比如：奶茶一杯" autocomplete="off" aria-describedby="form-error"></label><label>数量<input type="number" data-testid="prize-count-input" id="prize-count-input" min="1" max="1000000" step="1" value="1" aria-describedby="form-error"></label></div>
+            <p class="inline-error" id="form-error" role="alert"></p><button class="primary add-prize" data-testid="add-prize" type="submit" aria-label="添加奖品到奖池">＋ 添加到奖池</button>
+          </form>
+          <div class="pool-summary"><h3>我的奖池 <span id="prize-types">0 种</span></h3><span>共 <strong id="pool-total" data-testid="pool-total">0</strong> 份待开奖</span></div>
+          <div id="prize-list" class="prize-list"></div>
+          <p class="pool-note">点名称可重命名 · 同名奖品自动累加</p>
+        </section>
+      </div>
+      <section class="panel records-panel" aria-labelledby="records-heading" id="records-panel">
+        <div class="records-header"><div class="section-heading"><div><span class="eyebrow">HAPPY LITTLE MOMENTS</span><h2 id="records-heading">幸运收集册 <span id="record-total">0</span></h2></div></div><button class="outline" data-testid="redeem-all" aria-label="一键兑换当前筛选结果中的未兑奖奖品" disabled>一键兑奖</button></div>
+        <div class="record-tools"><div class="segments" aria-label="按兑奖状态筛选"><button data-testid="filter-all" data-filter="all" aria-label="显示全部中奖记录" aria-pressed="true">全部 <span>0</span></button><button data-testid="filter-unredeemed" data-filter="unredeemed" aria-label="显示未兑奖记录" aria-pressed="false">未兑奖 <span>0</span></button><button data-testid="filter-redeemed" data-filter="redeemed" aria-label="显示已兑奖记录" aria-pressed="false">已兑奖 <span>0</span></button></div><label class="search-box"><span aria-hidden="true">⌕</span><input data-testid="record-search" type="search" placeholder="搜索奖品名称" aria-label="搜索中奖记录"></label></div>
+        <div class="record-table-header" aria-hidden="true"><span>序号</span><span>幸运奖品</span><span>中奖时间</span><span>兑奖时间</span><span>操作</span></div><div id="record-list"></div>
+      </section>
+    </main>
+    <footer><span>一点期待，一点好运。</span><span>不二 · 用心收集每一份开心</span></footer>
+  </div>
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-message"><form method="dialog"><span class="dialog-symbol" aria-hidden="true">◇</span><h2 id="confirm-title"></h2><p id="confirm-message"></p><div class="dialog-actions"><button value="cancel" data-testid="confirm-cancel" aria-label="取消操作" class="quiet" autofocus>取消</button><button value="ok" data-testid="confirm-ok" aria-label="确认操作" class="primary">确认</button></div></form></dialog>
+  <div id="toasts" role="status" aria-live="polite" aria-atomic="false"></div>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
